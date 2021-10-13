@@ -3,6 +3,7 @@ package com.sanjay.galleryphotos.ui.home
 import android.os.Bundle
 import com.sanjay.galleryphotos.databinding.ActivityMainBinding
 import com.sanjay.galleryphotos.ui.base.BaseActivity
+import com.simplemobiletools.commons.views.MyRecyclerView
 
 class MainActivity : BaseActivity() {
     var binding:ActivityMainBinding? = null
