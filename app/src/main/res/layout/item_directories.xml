@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/directoryImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            tools:background="@drawable/ic_launcher_background"
+            app:layout_constraintDimensionRatio="w,1.21:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <TextView
+            android:id="@+id/txtDirectoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_marginStart="15dp"
+            android:text="@string/camera"
+            app:layout_constraintBottom_toTopOf="@id/txtTotalImages"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:layout_marginBottom="4dp"
+            />
+        <TextView
+            android:id="@+id/txtTotalImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_marginStart="15dp"
+            android:textColor="@color/white"
+            tools:text="23"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="5dp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
