@@ -1,16 +1,25 @@
 package com.sanjay.galleryphotos.ui.home
 
 import android.os.Bundle
+import android.util.Log
+import com.google.gson.Gson
 import com.sanjay.galleryphotos.adapters.DirectoriesAdapter
 import com.sanjay.galleryphotos.databinding.ActivityMainBinding
+import com.sanjay.galleryphotos.extension.convertToJson
 import com.sanjay.galleryphotos.models.Directories
 import com.sanjay.galleryphotos.ui.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
     var binding:ActivityMainBinding? = null
+    val TAG = "MainActivity"
     val mDirectoryAdapter by lazy{
         DirectoriesAdapter(ArrayList())
     }
+    @Inject
+    lateinit var gson: Gson
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -36,6 +45,8 @@ class MainActivity : BaseActivity() {
     }
 
     override fun initViews() {
+        val dir  = Directories(id = 23, dirName = "twitter", firstImgUrl = "dhskjhdjgjsg")
+        Log.d(TAG, "initViews: ${gson.convertToJson(dir)}")
     }
 
     override fun setupListener() {
@@ -45,6 +56,6 @@ class MainActivity : BaseActivity() {
     }
 
     override fun loadData() {
-
     }
+
 }

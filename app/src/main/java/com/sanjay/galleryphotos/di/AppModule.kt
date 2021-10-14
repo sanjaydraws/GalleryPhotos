@@ -1,5 +1,6 @@
 package com.sanjay.galleryphotos.di
 
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,10 @@ object AppModule {
     @Provides  // to prvide dependency
     @Named("String2")
     fun provideTestString2()=  "we will inject another String"
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson  = Gson()
+
 
 }
