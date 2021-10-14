@@ -14,10 +14,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object SharedPrefModule {
 
-    @Provides
-    @Singleton
-    fun customSharedPref( @ApplicationContext context: Context?) = context?.getSharedPreferences("mySharedPref", Context.MODE_PRIVATE)
-
 
     private inline fun SharedPreferences.edit(perform: (SharedPreferences.Editor) -> Unit) {
         val editor = this.edit()

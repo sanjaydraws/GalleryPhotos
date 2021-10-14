@@ -2,19 +2,18 @@ package com.sanjay.galleryphotos.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sanjay.galleryphotos.bindingadapter.loadImage
 import com.sanjay.galleryphotos.databinding.ItemDirectoriesBinding
-import com.sanjay.galleryphotos.models.Directories
+import com.sanjay.galleryphotos.models.Directory
 
 
-class DirectoriesAdapter (var directoriesList: List<Directories> ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
+class DirectoriesAdapter (var directoriesList: List<Directory> ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoriesAdapter.DirectoriesVH {
         val binding = ItemDirectoriesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DirectoriesVH(binding)
     }
-    fun updateData(directoriesList: List<Directories> ){
+    fun updateData(directoriesList: List<Directory> ){
         this.directoriesList = directoriesList
         notifyDataSetChanged()
     }
@@ -38,7 +37,7 @@ class DirectoriesAdapter (var directoriesList: List<Directories> ): RecyclerView
         holder.loadData(directoriesList[position])
     }
     inner  class DirectoriesVH(val binding :ItemDirectoriesBinding):RecyclerView.ViewHolder(binding.root){
-        fun loadData(directories : Directories){
+        fun loadData(directories : Directory){
             binding.txtTotalImages.text = "12"
             binding?.txtDirectoryName.text = directories.dirName
 
