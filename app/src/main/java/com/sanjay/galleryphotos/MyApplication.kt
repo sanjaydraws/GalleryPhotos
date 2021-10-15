@@ -6,6 +6,6 @@ import dagger.hilt.android.HiltAndroidApp
 
 
 @HiltAndroidApp
-class MyApp : MultiDexApplication() {
+class MyApplication : MultiDexApplication() {
 
 }

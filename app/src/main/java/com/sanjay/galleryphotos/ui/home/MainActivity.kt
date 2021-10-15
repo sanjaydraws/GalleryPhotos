@@ -2,6 +2,7 @@ package com.sanjay.galleryphotos.ui.home
 
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,7 +28,9 @@ class MainActivity : BaseActivity() {
     private var binding:ActivityMainBinding? = null
     private val TAG = "MainActivity"
     private val mDirectoryAdapter by lazy{
-        DirectoriesAdapter(ArrayList())
+        DirectoriesAdapter(ArrayList()){
+
+        }
     }
     private var boolean_folder = false
 
