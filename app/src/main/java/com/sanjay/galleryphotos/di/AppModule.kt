@@ -3,6 +3,7 @@ package com.sanjay.galleryphotos.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.sanjay.galleryphotos.constants.PREFS_KEY
 import com.sanjay.galleryphotos.helper.BaseConfig
 import dagger.Module
 import dagger.Provides
@@ -40,7 +41,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun getShredPrefs( @ApplicationContext context: Context?):SharedPreferences? = context?.getSharedPreferences("mySharedPref", Context.MODE_PRIVATE)
+    fun getShredPrefs( @ApplicationContext context: Context?):SharedPreferences? = context?.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
 
 
 
