@@ -2,7 +2,7 @@ package com.sanjay.galleryphotos.models;
 
 import java.util.ArrayList;
 
-public class Model_images {
+public class ModelDirectory {
     String str_folder;
     ArrayList<String> al_imagepath;
 

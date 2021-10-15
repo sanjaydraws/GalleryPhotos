@@ -1,6 +1,5 @@
 package com.sanjay.galleryphotos.ui.home
 
-import android.Manifest
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -9,15 +8,14 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.sanjay.galleryphotos.adapters.DirectoriesAdapter
 import com.sanjay.galleryphotos.constants.PERMISSION_READ_STORAGE
 import com.sanjay.galleryphotos.constants.PERMISSION_WRITE_STORAGE
 import com.sanjay.galleryphotos.databinding.ActivityMainBinding
 import com.sanjay.galleryphotos.extension.getPermissionString
-import com.sanjay.galleryphotos.models.Directory
-import com.sanjay.galleryphotos.models.Model_images
+import com.sanjay.galleryphotos.extension.hasPermission
+import com.sanjay.galleryphotos.models.ModelDirectory
 import com.sanjay.galleryphotos.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,7 +31,7 @@ class MainActivity : BaseActivity() {
     private var boolean_folder = false
 
     private val REQUEST_PERMISSIONS = 100
-    private var al_images: ArrayList<Model_images> = ArrayList()
+    private var directoriesList: ArrayList<ModelDirectory> = ArrayList()
 
     @Inject
     lateinit var gson: Gson
@@ -51,25 +49,23 @@ class MainActivity : BaseActivity() {
 
     override fun initArguments() {
         binding?.directoriesGrid?.adapter = mDirectoryAdapter
-        val directoriesList = ArrayList<Directory>()
-        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://wallsdesk.com/wp-content/uploads/2016/11/Pictures-of-Chicago-.jpg"))
-        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://www.pixelstalk.net/wp-content/uploads/2016/07/Wallpapers-pexels-photo.jpg"))
-        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://wallpapersdsc.net/wp-content/uploads/2016/09/Charleston-Images.jpg"))
-        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://jooinn.com/images/dramatic-landscape-7.jpg"))
-        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://tse3.mm.bing.net/th?id=OIP.0iqvqUM-_MntTZp4CMBaigHaEK&pid=Api&P=0&w=321&h=182"))
-        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://tse3.mm.bing.net/th?id=OIP.lqtsWbAaz2UVlJShP10hywHaE8&pid=Api&P=0&w=259&h=173"))
-        mDirectoryAdapter.updateData(directoriesList = directoriesList)
+//        val directoriesList = ArrayList<Directory>()
+//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://wallsdesk.com/wp-content/uploads/2016/11/Pictures-of-Chicago-.jpg"))
+//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://www.pixelstalk.net/wp-content/uploads/2016/07/Wallpapers-pexels-photo.jpg"))
+//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://wallpapersdsc.net/wp-content/uploads/2016/09/Charleston-Images.jpg"))
+//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://jooinn.com/images/dramatic-landscape-7.jpg"))
+//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://tse3.mm.bing.net/th?id=OIP.0iqvqUM-_MntTZp4CMBaigHaEK&pid=Api&P=0&w=321&h=182"))
+//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://tse3.mm.bing.net/th?id=OIP.lqtsWbAaz2UVlJShP10hywHaE8&pid=Api&P=0&w=259&h=173"))
 
-        if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-            &&
-            ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        if ( !hasPermission(PERMISSION_WRITE_STORAGE) && !hasPermission(PERMISSION_READ_STORAGE)
         ) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(getPermissionString(PERMISSION_READ_STORAGE),
+            // permission if
+            ActivityCompat.requestPermissions(this, arrayOf(getPermissionString(PERMISSION_READ_STORAGE),
                 getPermissionString(PERMISSION_WRITE_STORAGE)), REQUEST_PERMISSIONS);
         } else {
             Log.e("Else", "Else")
             val arr = fn_imagespath()
+            mDirectoryAdapter.updateData(directoriesList = arr)
             Log.d(TAG, "initArguments: ArrrayImages  $arr")
         }
 
@@ -90,8 +86,8 @@ class MainActivity : BaseActivity() {
     }
 
 
-    fun fn_imagespath(): ArrayList<Model_images> {
-        al_images.clear()
+    fun fn_imagespath(): ArrayList<ModelDirectory> {
+        directoriesList.clear()
         var int_position = 0
         val cursor: Cursor?
         var absolutePathOfImage: String? = null
@@ -109,8 +105,8 @@ class MainActivity : BaseActivity() {
             absolutePathOfImage = column_index_data?.let { cursor.getString(it) }
             absolutePathOfImage?.let { Log.e("Column", it) }
             column_index_folder_name?.let { cursor.getString(it) }?.let { Log.e("Folder", it) }
-            for (i in 0 until al_images.size) {
-                if (al_images[i].str_folder
+            for (i in 0 until directoriesList.size) {
+                if (directoriesList[i].str_folder
                         .equals(column_index_folder_name?.let { cursor.getString(it) })
                 ) {
                     boolean_folder = true
@@ -122,26 +118,26 @@ class MainActivity : BaseActivity() {
             }
             if (boolean_folder) {
                 val al_path: ArrayList<String?> = ArrayList()
-                al_path.addAll(al_images.get(int_position).getAl_imagepath())
+                al_path.addAll(directoriesList.get(int_position).getAl_imagepath())
                 al_path.add(absolutePathOfImage)
-                al_images.get(int_position).setAl_imagepath(al_path)
+                directoriesList.get(int_position).setAl_imagepath(al_path)
             } else {
                 val al_path: ArrayList<String?> = ArrayList()
                 al_path.add(absolutePathOfImage)
-                val obj_model = Model_images()
+                val obj_model = ModelDirectory()
                 obj_model.str_folder = column_index_folder_name?.let { cursor.getString(it) }
                 obj_model.setAl_imagepath(al_path)
-                al_images.add(obj_model)
+                directoriesList.add(obj_model)
             }
         }
-        for (i in 0 until al_images.size) {
-            Log.e("FOLDER", al_images.get(i).getStr_folder())
-            for (j in 0 until al_images[i].al_imagepath.size) {
-                Log.e("FILE", al_images[i].al_imagepath[j])
+        for (i in 0 until directoriesList.size) {
+            Log.e("FOLDER", directoriesList.get(i).getStr_folder())
+            for (j in 0 until directoriesList[i].al_imagepath.size) {
+                Log.e("FILE", directoriesList[i].al_imagepath[j])
             }
         }
 
-        return al_images
+        return directoriesList
     }
 
 
@@ -156,13 +152,15 @@ class MainActivity : BaseActivity() {
                 var i = 0
                 while (i < grantResults.size) {
                     if (grantResults.isNotEmpty() && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        fn_imagespath()
+                        mDirectoryAdapter.updateData(fn_imagespath())
                     } else {
                         Toast.makeText(
                             this@MainActivity,
                             "The app was not allowed to read or write to your storage. Hence, it cannot function properly. Please consider granting it this permission",
                             Toast.LENGTH_LONG
                         ).show()
+                        finish() // if permission denied
+                        return
                     }
                     i++
                 }

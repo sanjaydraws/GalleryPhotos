@@ -6,14 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sanjay.galleryphotos.bindingadapter.loadImage
 import com.sanjay.galleryphotos.databinding.ItemDirectoriesBinding
 import com.sanjay.galleryphotos.models.Directory
+import com.sanjay.galleryphotos.models.ModelDirectory
 
 
-class DirectoriesAdapter (var directoriesList: List<Directory> ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
+class DirectoriesAdapter (var directoriesList: List<ModelDirectory> ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoriesAdapter.DirectoriesVH {
         val binding = ItemDirectoriesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DirectoriesVH(binding)
     }
-    fun updateData(directoriesList: List<Directory> ){
+    fun updateData(directoriesList: List<ModelDirectory> ){
         this.directoriesList = directoriesList
         notifyDataSetChanged()
     }
@@ -37,11 +38,11 @@ class DirectoriesAdapter (var directoriesList: List<Directory> ): RecyclerView.A
         holder.loadData(directoriesList[position])
     }
     inner  class DirectoriesVH(val binding :ItemDirectoriesBinding):RecyclerView.ViewHolder(binding.root){
-        fun loadData(directories : Directory){
+        fun loadData(directories : ModelDirectory){
             binding.txtTotalImages.text = "12"
-            binding?.txtDirectoryName.text = directories.dirName
+            binding?.txtDirectoryName.text = directories.str_folder
 
-            binding?.directoryImage.loadImage(directories.firstImgUrl)
+            binding?.directoryImage.loadImage(directories.al_imagepath[0])
         }
     }
 }
