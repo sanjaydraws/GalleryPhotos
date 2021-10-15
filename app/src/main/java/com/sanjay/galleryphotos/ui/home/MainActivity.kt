@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.gson.Gson
+import com.sanjay.galleryphotos.R
 import com.sanjay.galleryphotos.adapters.DirectoriesAdapter
 import com.sanjay.galleryphotos.constants.PERMISSION_READ_STORAGE
 import com.sanjay.galleryphotos.constants.PERMISSION_WRITE_STORAGE
@@ -49,27 +50,7 @@ class MainActivity : BaseActivity() {
 
     override fun initArguments() {
         binding?.directoriesGrid?.adapter = mDirectoryAdapter
-//        val directoriesList = ArrayList<Directory>()
-//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://wallsdesk.com/wp-content/uploads/2016/11/Pictures-of-Chicago-.jpg"))
-//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://www.pixelstalk.net/wp-content/uploads/2016/07/Wallpapers-pexels-photo.jpg"))
-//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://wallpapersdsc.net/wp-content/uploads/2016/09/Charleston-Images.jpg"))
-//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://jooinn.com/images/dramatic-landscape-7.jpg"))
-//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://tse3.mm.bing.net/th?id=OIP.0iqvqUM-_MntTZp4CMBaigHaEK&pid=Api&P=0&w=321&h=182"))
-//        directoriesList.add(Directory(id = 0, dirName = "Camera", "https://tse3.mm.bing.net/th?id=OIP.lqtsWbAaz2UVlJShP10hywHaE8&pid=Api&P=0&w=259&h=173"))
-
-        if ( !hasPermission(PERMISSION_WRITE_STORAGE) && !hasPermission(PERMISSION_READ_STORAGE)
-        ) {
-            // permission if
-            ActivityCompat.requestPermissions(this, arrayOf(getPermissionString(PERMISSION_READ_STORAGE),
-                getPermissionString(PERMISSION_WRITE_STORAGE)), REQUEST_PERMISSIONS);
-        } else {
-            Log.e("Else", "Else")
-            val arr = fn_imagespath()
-            mDirectoryAdapter.updateData(directoriesList = arr)
-            Log.d(TAG, "initArguments: ArrrayImages  $arr")
-        }
-
-
+        askPermission()
     }
 
     override fun initViews() {
@@ -86,7 +67,20 @@ class MainActivity : BaseActivity() {
     }
 
 
-    fun fn_imagespath(): ArrayList<ModelDirectory> {
+    private fun askPermission(){
+        if ( !hasPermission(PERMISSION_WRITE_STORAGE) && !hasPermission(PERMISSION_READ_STORAGE)
+        ) {
+            // ask permission if permission denied
+            ActivityCompat.requestPermissions(this, arrayOf(getPermissionString(PERMISSION_READ_STORAGE),
+                getPermissionString(PERMISSION_WRITE_STORAGE)), REQUEST_PERMISSIONS);
+        } else {
+            Log.e("Else", "Else")
+            val dir = getDirectories()
+            mDirectoryAdapter.updateData(directoriesList = dir)
+            Log.d(TAG, "initArguments: ArrrayImages  $dir")
+        }
+    }
+    private fun getDirectories(): ArrayList<ModelDirectory> {
         directoriesList.clear()
         var int_position = 0
         val cursor: Cursor?
@@ -152,11 +146,11 @@ class MainActivity : BaseActivity() {
                 var i = 0
                 while (i < grantResults.size) {
                     if (grantResults.isNotEmpty() && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        mDirectoryAdapter.updateData(fn_imagespath())
+                        mDirectoryAdapter.updateData(getDirectories())
                     } else {
                         Toast.makeText(
                             this@MainActivity,
-                            "The app was not allowed to read or write to your storage. Hence, it cannot function properly. Please consider granting it this permission",
+                            getString(R.string.The_app_was_not_allowed_to_read_or_write_to_your_storage),
                             Toast.LENGTH_LONG
                         ).show()
                         finish() // if permission denied

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GalleryPhotos</string>
     <string name="camera">Camera</string>
+    <string name="The_app_was_not_allowed_to_read_or_write_to_your_storage">The app was not allowed to read or write to your storage</string>
 </resources>

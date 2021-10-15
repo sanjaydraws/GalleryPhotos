@@ -39,7 +39,7 @@ class DirectoriesAdapter (var directoriesList: List<ModelDirectory> ): RecyclerV
     }
     inner  class DirectoriesVH(val binding :ItemDirectoriesBinding):RecyclerView.ViewHolder(binding.root){
         fun loadData(directories : ModelDirectory){
-            binding.txtTotalImages.text = "12"
+            binding.txtTotalImages.text = directories.al_imagepath.size.toString()
             binding?.txtDirectoryName.text = directories.str_folder
 
             binding?.directoryImage.loadImage(directories.al_imagepath[0])
