@@ -17,8 +17,9 @@ import com.sanjay.galleryphotos.constants.PERMISSION_WRITE_STORAGE
 import com.sanjay.galleryphotos.databinding.ActivityMainBinding
 import com.sanjay.galleryphotos.extension.getPermissionString
 import com.sanjay.galleryphotos.extension.hasPermission
-import com.sanjay.galleryphotos.models.ModelDirectory
+import com.sanjay.galleryphotos.models.Directory
 import com.sanjay.galleryphotos.ui.base.BaseActivity
+import com.sanjay.galleryphotos.ui.photos.DirectoryPhotosActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,13 +30,13 @@ class MainActivity : BaseActivity() {
     private val TAG = "MainActivity"
     private val mDirectoryAdapter by lazy{
         DirectoriesAdapter(ArrayList()){
-
+            DirectoryPhotosActivity.startIntent(this@MainActivity, it)
         }
     }
     private var boolean_folder = false
 
     private val REQUEST_PERMISSIONS = 100
-    private var directoriesList: ArrayList<ModelDirectory> = ArrayList()
+    private var directoriesList: ArrayList<Directory> = ArrayList()
 
     @Inject
     lateinit var gson: Gson
@@ -83,7 +84,7 @@ class MainActivity : BaseActivity() {
             Log.d(TAG, "initArguments: ArrrayImages  $dir")
         }
     }
-    private fun getDirectories(): ArrayList<ModelDirectory> {
+    private fun getDirectories(): ArrayList<Directory> {
         directoriesList.clear()
         var int_position = 0
         val cursor: Cursor?
@@ -114,23 +115,27 @@ class MainActivity : BaseActivity() {
                 }
             }
             if (boolean_folder) {
-                val al_path: ArrayList<String?> = ArrayList()
-                al_path.addAll(directoriesList.get(int_position).getAl_imagepath())
-                al_path.add(absolutePathOfImage)
-                directoriesList.get(int_position).setAl_imagepath(al_path)
+                val al_path: ArrayList<String>? = ArrayList()
+                directoriesList.get(int_position).al_imagepath?.let { al_path?.addAll(it) }
+                if (absolutePathOfImage != null) {
+                    al_path?.add(absolutePathOfImage)
+                }
+                directoriesList.get(int_position).al_imagepath = al_path
             } else {
-                val al_path: ArrayList<String?> = ArrayList()
-                al_path.add(absolutePathOfImage)
-                val obj_model = ModelDirectory()
+                val al_path: ArrayList<String>? = ArrayList()
+                if (absolutePathOfImage != null) {
+                    al_path?.add(absolutePathOfImage)
+                }
+                val obj_model = Directory()
                 obj_model.str_folder = column_index_folder_name?.let { cursor.getString(it) }
-                obj_model.setAl_imagepath(al_path)
+                obj_model.al_imagepath = al_path
                 directoriesList.add(obj_model)
             }
         }
         for (i in 0 until directoriesList.size) {
-            Log.e("FOLDER", directoriesList.get(i).getStr_folder())
-            for (j in 0 until directoriesList[i].al_imagepath.size) {
-                Log.e("FILE", directoriesList[i].al_imagepath[j])
+            directoriesList[i].str_folder?.let { Log.e("FOLDER", it) }
+            for (j in 0 until directoriesList[i].al_imagepath?.size!!) {
+                directoriesList[i].al_imagepath?.get(j)?.let { Log.e("FILE", it) }
             }
         }
 

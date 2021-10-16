@@ -8,12 +8,12 @@ import com.sanjay.galleryphotos.databinding.ItemDirectoriesBinding
 import com.sanjay.galleryphotos.databinding.ItemDirectoryphotosGridBinding
 
 
-class DirectoryPhotosAdapter (var photosList: List<String> ): RecyclerView.Adapter<DirectoryPhotosAdapter.DirectoriesPhotosVH>() {
+class DirectoryPhotosAdapter (var photosList: List<String>? = null  ): RecyclerView.Adapter<DirectoryPhotosAdapter.DirectoriesPhotosVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoryPhotosAdapter.DirectoriesPhotosVH {
         val binding = ItemDirectoryphotosGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DirectoriesPhotosVH(binding)
     }
-    fun updateData(photosList: List<String> ){
+    fun updateData(photosList: List<String>? ){
         this.photosList = photosList
         notifyDataSetChanged()
     }
@@ -30,14 +30,14 @@ class DirectoryPhotosAdapter (var photosList: List<String> ): RecyclerView.Adapt
 
 
     override fun getItemCount(): Int {
-        return photosList.size
+        return photosList?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: DirectoryPhotosAdapter.DirectoriesPhotosVH, position: Int) {
-        holder.loadData(photosList.get(position))
+        holder.loadData(photosList?.get(position))
     }
     inner  class DirectoriesPhotosVH(val binding : ItemDirectoryphotosGridBinding): RecyclerView.ViewHolder(binding.root){
-        fun loadData(photosUri : String){
+        fun loadData(photosUri : String?){
             binding.photoImage.loadImage(photosUri)
             binding.photoImage.setOnClickListener {
             }

@@ -5,17 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sanjay.galleryphotos.bindingadapter.loadImage
 import com.sanjay.galleryphotos.databinding.ItemDirectoriesBinding
-import com.sanjay.galleryphotos.models.ModelDirectory
+import com.sanjay.galleryphotos.models.Directory
 
 
 class DirectoriesAdapter(
-    var directoriesList: List<ModelDirectory>,
-    val onDirectoryClick: ((Array<String>) -> Unit)  ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
+    var directoriesList: List<Directory>,
+    val onDirectoryClick: ((ArrayList<String>?) -> Unit)  ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoriesAdapter.DirectoriesVH {
         val binding = ItemDirectoriesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DirectoriesVH(binding)
     }
-    fun updateData(directoriesList: List<ModelDirectory> ){
+    fun updateData(directoriesList: List<Directory> ){
         this.directoriesList = directoriesList
         notifyDataSetChanged()
     }
@@ -39,14 +39,14 @@ class DirectoriesAdapter(
         holder.loadData(directoriesList[position])
     }
     inner  class DirectoriesVH(val binding :ItemDirectoriesBinding):RecyclerView.ViewHolder(binding.root){
-        fun loadData(directories: ModelDirectory){
-            binding.txtTotalImages.text = directories.al_imagepath.size.toString()
+        fun loadData(directories: Directory){
+            binding.txtTotalImages.text = directories.al_imagepath?.size.toString()
             binding.txtDirectoryName.text = directories.str_folder
 
-            binding.directoryImage.loadImage(directories.al_imagepath[0])
+            binding.directoryImage.loadImage(directories.al_imagepath?.get(0))
 
             binding?.directoryImage.setOnClickListener {
-//                    onDirectoryClick.invoke(directories.al_imagepath)
+                    onDirectoryClick.invoke(directories.al_imagepath)
             }
         }
     }
