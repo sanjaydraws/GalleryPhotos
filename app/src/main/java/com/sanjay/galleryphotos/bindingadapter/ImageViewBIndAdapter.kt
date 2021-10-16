@@ -14,7 +14,7 @@ fun ImageView.loadImage(imageUrl: String?){
     imageUrl?.let {
         Glide.with(this).load(imageUrl).
         centerCrop().
-        placeholder(R.drawable.ic_launcher_background).
+        placeholder(R.drawable.bg_color_grey).
         into(this)
     }
 }
