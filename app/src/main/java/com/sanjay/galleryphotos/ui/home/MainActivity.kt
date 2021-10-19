@@ -2,7 +2,6 @@ package com.sanjay.galleryphotos.ui.home
 
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import com.google.gson.Gson
 import com.sanjay.galleryphotos.R
 import com.sanjay.galleryphotos.adapters.DirectoriesAdapter
+import com.sanjay.galleryphotos.constants.BY_MEDIA_DATE_TAKEN
 import com.sanjay.galleryphotos.constants.PERMISSION_READ_STORAGE
 import com.sanjay.galleryphotos.constants.PERMISSION_WRITE_STORAGE
 import com.sanjay.galleryphotos.databinding.ActivityMainBinding
@@ -87,58 +87,48 @@ class MainActivity : BaseActivity() {
     private fun getDirectories(): ArrayList<Directory> {
         directoriesList.clear()
         var int_position = 0
-        val cursor: Cursor?
         var absolutePathOfImage: String? = null
         val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection =
-            arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-        val orderBy = MediaStore.Images.Media.DATE_TAKEN
-        cursor = applicationContext.contentResolver.query(
-            uri, projection, null, null,
-            "$orderBy DESC"
-        )
-        val column_index_data: Int? = cursor?.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-        val column_index_folder_name: Int? = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+        val projection = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+        val cursor: Cursor? = applicationContext.contentResolver.query(uri, projection, null, null, "$BY_MEDIA_DATE_TAKEN DESC")
+        val columnIndexData: Int? = cursor?.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA) // 0
+        val columnIndexDirectoryName: Int? = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME) // 1
         while (cursor?.moveToNext() == true) {
-            absolutePathOfImage = column_index_data?.let { cursor.getString(it) }
-            absolutePathOfImage?.let { Log.e("Column", it) }
-            column_index_folder_name?.let { cursor.getString(it) }?.let { Log.e("Folder", it) }
+            absolutePathOfImage = columnIndexData?.let { cursor.getString(it) } // storage/emulated/0/WhatsApp/Media/WhatsApp Images/IMG-20211018-WA0001.jpg
+            columnIndexDirectoryName?.let { cursor.getString(it) }?.let { Log.e("Folder", it) }
             for (i in 0 until directoriesList.size) {
-                if (directoriesList[i].str_folder
-                        .equals(column_index_folder_name?.let { cursor.getString(it) })
-                ) {
+                if (directoriesList[i].directoryName.equals(columnIndexDirectoryName?.let { cursor.getString(it) })) {
+                    // if directory already present in list
                     boolean_folder = true
                     int_position = i
                     break
                 } else {
+                    // if size is zero or directory not present in list
                     boolean_folder = false
                 }
             }
             if (boolean_folder) {
-                val al_path: ArrayList<String>? = ArrayList()
-                directoriesList.get(int_position).al_imagepath?.let { al_path?.addAll(it) }
-                if (absolutePathOfImage != null) {
-                    al_path?.add(absolutePathOfImage)
-                }
-                directoriesList.get(int_position).al_imagepath = al_path
+                // when directory already present
+                val photosPath: ArrayList<String>? = ArrayList()
+                directoriesList[int_position].allPhotos?.let { photosPath?.addAll(it) } // added to new array
+                absolutePathOfImage?.let { photosPath?.add(it) } // added new path
+                directoriesList[int_position].allPhotos = photosPath // copy on that index
             } else {
-                val al_path: ArrayList<String>? = ArrayList()
-                if (absolutePathOfImage != null) {
-                    al_path?.add(absolutePathOfImage)
-                }
-                val obj_model = Directory()
-                obj_model.str_folder = column_index_folder_name?.let { cursor.getString(it) }
-                obj_model.al_imagepath = al_path
-                directoriesList.add(obj_model)
+                //if size is zero or directory not present in list and  added new directory in list
+                val photosPath: ArrayList<String>? = ArrayList()
+                absolutePathOfImage?.let { photosPath?.add(it) }
+                val directory = Directory()
+                directory.directoryName = columnIndexDirectoryName?.let { cursor.getString(it) }
+                directory.allPhotos = photosPath
+                directoriesList.add(directory)
             }
         }
-        for (i in 0 until directoriesList.size) {
-            directoriesList[i].str_folder?.let { Log.e("FOLDER", it) }
-            for (j in 0 until directoriesList[i].al_imagepath?.size!!) {
-                directoriesList[i].al_imagepath?.get(j)?.let { Log.e("FILE", it) }
-            }
-        }
-
+//        for (i in 0 until directoriesList.size) {
+//            directoriesList[i].directoryName?.let { Log.e("FOLDER", it) }
+//            for (j in 0 until directoriesList[i].allPhotos?.size!!) {
+//                directoriesList[i].allPhotos?.get(j)?.let { Log.e("FILE", it) }
+//            }
+//        }
         return directoriesList
     }
 

@@ -40,13 +40,13 @@ class DirectoriesAdapter(
     }
     inner  class DirectoriesVH(val binding :ItemDirectoriesBinding):RecyclerView.ViewHolder(binding.root){
         fun loadData(directories: Directory){
-            binding.txtTotalImages.text = directories.al_imagepath?.size.toString()
-            binding.txtDirectoryName.text = directories.str_folder
+            binding.txtTotalImages.text = directories.allPhotos?.size.toString()
+            binding.txtDirectoryName.text = directories.directoryName
 
-            binding.directoryImage.loadImage(directories.al_imagepath?.get(0))
+            binding.directoryImage.loadImage(directories.allPhotos?.get(0))
 
             binding?.directoryImage.setOnClickListener {
-                    onDirectoryClick.invoke(directories.al_imagepath)
+                    onDirectoryClick.invoke(directories.allPhotos)
             }
         }
     }
