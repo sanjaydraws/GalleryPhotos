@@ -7,17 +7,21 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.sanjay.galleryphotos.R
 import com.sanjay.galleryphotos.adapters.DirectoriesAdapter
 import com.sanjay.galleryphotos.constants.BY_MEDIA_DATE_TAKEN
 import com.sanjay.galleryphotos.constants.PERMISSION_READ_STORAGE
 import com.sanjay.galleryphotos.constants.PERMISSION_WRITE_STORAGE
+import com.sanjay.galleryphotos.constants.REQUEST_PERMISSIONS
 import com.sanjay.galleryphotos.databinding.ActivityMainBinding
 import com.sanjay.galleryphotos.extension.getPermissionString
 import com.sanjay.galleryphotos.extension.hasPermission
 import com.sanjay.galleryphotos.models.Directory
+import com.sanjay.galleryphotos.repository.DirectoryRepositoryImpl
 import com.sanjay.galleryphotos.ui.base.BaseActivity
 import com.sanjay.galleryphotos.ui.photos.DirectoryPhotosActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,13 +37,7 @@ class MainActivity : BaseActivity() {
             DirectoryPhotosActivity.startIntent(this@MainActivity, it)
         }
     }
-    private var boolean_folder = false
-
-    private val REQUEST_PERMISSIONS = 100
-    private var directoriesList: ArrayList<Directory> = ArrayList()
-
-    @Inject
-    lateinit var gson: Gson
+    val mViewModel by viewModels<DirectoryViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -65,6 +63,11 @@ class MainActivity : BaseActivity() {
     }
 
     override fun initObservers() {
+        mViewModel.directoriesResponse.observe(this, Observer {
+            it?:return@Observer
+            mDirectoryAdapter.updateData(directoriesList = it)
+            Log.d(TAG, "initArguments: ArrrayImages  $it")
+        })
     }
 
     override fun loadData() {
@@ -78,60 +81,9 @@ class MainActivity : BaseActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(getPermissionString(PERMISSION_READ_STORAGE),
                 getPermissionString(PERMISSION_WRITE_STORAGE)), REQUEST_PERMISSIONS);
         } else {
-            Log.e("Else", "Else")
-            val dir = getDirectories()
-            mDirectoryAdapter.updateData(directoriesList = dir)
-            Log.d(TAG, "initArguments: ArrrayImages  $dir")
+            mViewModel?.getDirectories()
         }
     }
-    private fun getDirectories(): ArrayList<Directory> {
-        directoriesList.clear()
-        var int_position = 0
-        var absolutePathOfImage: String? = null
-        val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-        val cursor: Cursor? = applicationContext.contentResolver.query(uri, projection, null, null, "$BY_MEDIA_DATE_TAKEN DESC")
-        val columnIndexData: Int? = cursor?.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA) // 0
-        val columnIndexDirectoryName: Int? = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME) // 1
-        while (cursor?.moveToNext() == true) {
-            absolutePathOfImage = columnIndexData?.let { cursor.getString(it) } // storage/emulated/0/WhatsApp/Media/WhatsApp Images/IMG-20211018-WA0001.jpg
-            columnIndexDirectoryName?.let { cursor.getString(it) }?.let { Log.e("Folder", it) }
-            for (i in 0 until directoriesList.size) {
-                if (directoriesList[i].directoryName.equals(columnIndexDirectoryName?.let { cursor.getString(it) })) {
-                    // if directory already present in list
-                    boolean_folder = true
-                    int_position = i
-                    break
-                } else {
-                    // if size is zero or directory not present in list
-                    boolean_folder = false
-                }
-            }
-            if (boolean_folder) {
-                // when directory already present
-                val photosPath: ArrayList<String>? = ArrayList()
-                directoriesList[int_position].allPhotos?.let { photosPath?.addAll(it) } // added to new array
-                absolutePathOfImage?.let { photosPath?.add(it) } // added new path
-                directoriesList[int_position].allPhotos = photosPath // copy on that index
-            } else {
-                //if size is zero or directory not present in list and  added new directory in list
-                val photosPath: ArrayList<String>? = ArrayList()
-                absolutePathOfImage?.let { photosPath?.add(it) }
-                val directory = Directory()
-                directory.directoryName = columnIndexDirectoryName?.let { cursor.getString(it) }
-                directory.allPhotos = photosPath
-                directoriesList.add(directory)
-            }
-        }
-//        for (i in 0 until directoriesList.size) {
-//            directoriesList[i].directoryName?.let { Log.e("FOLDER", it) }
-//            for (j in 0 until directoriesList[i].allPhotos?.size!!) {
-//                directoriesList[i].allPhotos?.get(j)?.let { Log.e("FILE", it) }
-//            }
-//        }
-        return directoriesList
-    }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -144,7 +96,7 @@ class MainActivity : BaseActivity() {
                 var i = 0
                 while (i < grantResults.size) {
                     if (grantResults.isNotEmpty() && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        mDirectoryAdapter.updateData(getDirectories())
+                        mViewModel?.getDirectories()
                     } else {
                         Toast.makeText(
                             this@MainActivity,
