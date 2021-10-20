@@ -29,9 +29,6 @@ fun Context.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) {
 }
 
 
-fun Any.toast(context: Context, @StringRes id: Int, duration: Int=Toast.LENGTH_SHORT) {
-    context.toast(id, duration)
-}
 
 
 fun Context.longToast(content: String) {

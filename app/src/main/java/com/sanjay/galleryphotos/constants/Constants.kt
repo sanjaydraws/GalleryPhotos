@@ -21,3 +21,6 @@ const val  BY_MEDIA_DATE_TAKEN = MediaStore.Images.Media.DATE_TAKEN
 
 // content provider uri
 
+
+val REQUEST_PERMISSIONS = 100
+
