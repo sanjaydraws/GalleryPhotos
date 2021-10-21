@@ -10,7 +10,7 @@ import com.sanjay.galleryphotos.models.Directory
 
 class DirectoriesAdapter(
     var directoriesList: List<Directory>,
-    val onDirectoryClick: ((ArrayList<String>?) -> Unit)  ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
+    val onDirectoryClick: ((ArrayList<String>?, dirName:String?) -> Unit)  ): RecyclerView.Adapter<DirectoriesAdapter.DirectoriesVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoriesAdapter.DirectoriesVH {
         val binding = ItemDirectoriesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DirectoriesVH(binding)
@@ -46,7 +46,7 @@ class DirectoriesAdapter(
             binding.directoryImage.loadImage(directories.allPhotos?.get(0))
 
             binding?.directoryImage.setOnClickListener {
-                    onDirectoryClick.invoke(directories.allPhotos)
+                    onDirectoryClick.invoke(directories.allPhotos, directories.directoryName)
             }
         }
     }

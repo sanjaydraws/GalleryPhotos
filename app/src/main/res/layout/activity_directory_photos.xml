@@ -7,13 +7,29 @@
         android:layout_height="match_parent"
         tools:context=".ui.photos.DirectoryPhotosActivity">
 
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_500"
+            app:titleTextColor="@color/white"
+            app:title=""
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photosDirectoryGrid"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:scrollbars="none"
             app:spanCount="2"
             android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             />
 

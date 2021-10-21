@@ -33,8 +33,8 @@ class MainActivity : BaseActivity() {
     private var binding:ActivityMainBinding? = null
     private val TAG = "MainActivity"
     private val mDirectoryAdapter by lazy{
-        DirectoriesAdapter(ArrayList()){
-            DirectoryPhotosActivity.startIntent(this@MainActivity, it)
+        DirectoriesAdapter(ArrayList()){ arr , dirName ->
+            DirectoryPhotosActivity.startIntent(this@MainActivity, arr, dirName)
         }
     }
     val mViewModel by viewModels<DirectoryViewModel>()

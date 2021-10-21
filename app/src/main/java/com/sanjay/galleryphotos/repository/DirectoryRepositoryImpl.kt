@@ -11,7 +11,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class DirectoryRepositoryImpl @Inject constructor(@ApplicationContext val context: Context?) :DirectoryRepository{
-
     override fun getDirectories(): ArrayList<Directory> {
         val directoriesList:ArrayList<Directory> = ArrayList()
         var int_position = 0
@@ -25,6 +24,7 @@ class DirectoryRepositoryImpl @Inject constructor(@ApplicationContext val contex
         while (cursor?.moveToNext() == true) {
             absolutePathOfImage = columnIndexData?.let { cursor.getString(it) } // storage/emulated/0/WhatsApp/Media/WhatsApp Images/IMG-20211018-WA0001.jpg
             columnIndexDirectoryName?.let { cursor.getString(it) }?.let { Log.e("Folder", it) }
+
             for (i in 0 until directoriesList.size) {
                 if (directoriesList[i].directoryName.equals(columnIndexDirectoryName?.let { cursor.getString(it) })) {
                     // if directory already present in list

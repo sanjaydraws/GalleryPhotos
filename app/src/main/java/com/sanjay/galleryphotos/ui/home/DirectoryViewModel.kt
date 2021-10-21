@@ -21,7 +21,7 @@ class DirectoryViewModel @Inject constructor(private val directoryRepositoryImpl
         viewModelScope.launch {
             val directories = directoryRepositoryImpl.getDirectories()
             _directoriesResponse.postValue(directories)
-        }
+        }   //IMG-20211018-WA0001.jpg
     }
 
 }

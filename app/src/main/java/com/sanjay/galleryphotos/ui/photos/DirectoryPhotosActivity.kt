@@ -8,7 +8,6 @@ import com.sanjay.galleryphotos.R
 import com.sanjay.galleryphotos.adapters.DirectoriesAdapter
 import com.sanjay.galleryphotos.adapters.DirectoryPhotosAdapter
 import com.sanjay.galleryphotos.databinding.ActivityDirectoryPhotosBinding
-import com.sanjay.galleryphotos.databinding.ActivityMainBinding
 import com.sanjay.galleryphotos.ui.base.BaseActivity
 
 class DirectoryPhotosActivity : BaseActivity() {
@@ -18,16 +17,21 @@ class DirectoryPhotosActivity : BaseActivity() {
     }
     companion object{
         const val DIRECTORY_PHOTOS = "directoryPhotos"
-        fun startIntent(context: Context?,directoryPhotos:ArrayList<String>? = null ){
+        const val DIR_NAME = "directoryName"
+        fun startIntent(context: Context?,directoryPhotos:ArrayList<String>? = null,dirName:String? =  null  ){
             val intent = Intent(context,DirectoryPhotosActivity::class.java)
             intent.apply {
                 putStringArrayListExtra(DIRECTORY_PHOTOS, directoryPhotos)
+                putExtra(DIR_NAME, dirName)
             }
             context?.startActivity(intent)
         }
     }
     private val directoryPhotos by  lazy{
         intent.extras?.getStringArrayList(DIRECTORY_PHOTOS)
+    }
+    private val dirName by lazy{
+        intent.extras?.getString(DIR_NAME)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +46,9 @@ class DirectoryPhotosActivity : BaseActivity() {
     }
 
     override fun initArguments() {
-         binding?.photosDirectoryGrid?.adapter = mDirectoryPhotosAdapter
+        binding?.header?.title  = dirName
+        setSupportActionBar(binding?.header)
+        binding?.photosDirectoryGrid?.adapter = mDirectoryPhotosAdapter
          mDirectoryPhotosAdapter.updateData(directoryPhotos)
     }
 
